@@ -3,6 +3,7 @@ package main
 import (
 	output "fmt"
 	"net/http"
+	"os"
 
 	"github.com/gorilla/websocket"
 )
@@ -36,7 +37,12 @@ func InitSocketListening(socket *websocket.Conn) {
 }
 
 func main() {
-	http.HandleFunc("/ws", func(w http.ResponseWriter, r *http.Request) {
+	var port = os.Getenv("PORT")
+	if port == "" {
+		port = "8080"
+	}
+
+	http.HandleFunc("/wss", func(w http.ResponseWriter, r *http.Request) {
 		var socket, err = upgrader.Upgrade(w, r, nil)
 		if err != nil {
 			output.Println("Conversion of HTTP to WebSocket failed.", err)
@@ -49,8 +55,8 @@ func main() {
 	output.Println("Server booting up and locking down port :8080...")
 
 	// Notice the colon prefix (":8080"). This halts main() and keeps it listening forever.
-	var listenErr = http.ListenAndServe(":8080", nil)
+	var listenErr = http.ListenAndServe(":"+port, nil)
 	if listenErr != nil {
-		output.Println("The server crashed during port binding initialization:", listenErr)
+		output.Println("The server crashed during initialization for port "+port+":", listenErr)
 	}
 }
