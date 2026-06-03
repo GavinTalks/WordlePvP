@@ -106,6 +106,7 @@ func InitSocketListening() {
 	}
 }
 
+// main
 func main() {
 	wordleApp := app.New()
 
