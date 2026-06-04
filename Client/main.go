@@ -109,9 +109,10 @@ func InitSocketListening() {
 // main
 func main() {
 	wordleApp := app.New()
-
 	mainWindow = wordleApp.NewWindow("Wordle PvP Client")
-	mainWindow.Resize(fyne.NewSize(450, 250))
+
+	// var screenSizeX = mainWindow.Content().Size().Width
+	// var screenSizeY = mainWindow.Content().Size().Height
 
 	// DISPLAYED LOGO
 	var logoResource = fyne.NewStaticResource("Icon.png", WordleIconRawBytes)
@@ -130,8 +131,13 @@ func main() {
 	})
 
 	var joinLobbyBtn = NewCustomButton("Join Lobby", 150, 35, func() {
-
+		SignalServer("Oi mf", nil)
 	})
+
+	var notice = canvas.NewText("Note: Request desktop site for better experience!", color.White)
+	notice.Hidden = wordleApp.Driver().Device().IsMobile()
+	notice.Alignment = fyne.TextAlignCenter
+	notice.Refresh()
 
 	trueLayout = container.NewVBox(
 		container.NewBorder(logoImage, nil, nil, nil, title),
@@ -142,12 +148,9 @@ func main() {
 			joinLobbyBtn,
 		)),
 	)
-	var mainLayout = container.NewCenter(trueLayout)
 
-	var notice = canvas.NewText("Note: Request desktop site for better experience!", color.White)
-	notice.Hidden = wordleApp.Driver().Device().IsMobile()
-
-	mainWindow.SetContent(container.NewVBox(mainLayout, notice))
+	var masterLayout = container.NewBorder(nil, notice, nil, nil, container.NewCenter(trueLayout))
+	mainWindow.SetContent(masterLayout)
 
 	go func() {
 		var err error
